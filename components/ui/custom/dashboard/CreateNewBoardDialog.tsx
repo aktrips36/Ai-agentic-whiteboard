@@ -18,12 +18,11 @@ import { useRouter } from "next/navigation";
 
 const CreateNewBoardDialog = () => {
   const [workspaceName, setWorkspaceName] = useState("");
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
-  const [dialog,setDialog] = useState(false)
+  const [dialog, setDialog] = useState(false);
 
   const route = useRouter();
-
 
   const handleCreateBoard = async () => {
     if (workspaceName.trim() === "" || workspaceName?.length > 30) {
@@ -37,22 +36,23 @@ const CreateNewBoardDialog = () => {
 
     setLoading(true);
     const projectId = crypto.randomUUID(); // Generate a unique ID for the new board
+
     const result = await axios.post("/api/projects", {
       projectName: workspaceName,
-      projectId
-    })
-    
-    console.log(result?.data)
+      projectId,
+    });
+
+    console.log(result?.data);
     toast.add({
       type: "success",
       title: "New Workspace Created",
       description: `Workspace "${workspaceName}" has been created successfully.`,
-    })
+    });
 
     setLoading(false);
     setDialog(false);
 
-    route.push('/workspace/' + projectId)
+    route.push("/workspace/" + projectId);
     // Logic to create a new board with the workspaceName
     console.log("Creating new board with name:", workspaceName);
     // Reset the input field after creation
@@ -89,7 +89,11 @@ const CreateNewBoardDialog = () => {
             <Button variant="outline">Cancel</Button>
           </DialogClose>
           <Button
-            disabled={workspaceName.trim() === "" || workspaceName?.length > 30 || loading}
+            disabled={
+              workspaceName.trim() === "" ||
+              workspaceName?.length > 30 ||
+              loading
+            }
             onClick={handleCreateBoard}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
