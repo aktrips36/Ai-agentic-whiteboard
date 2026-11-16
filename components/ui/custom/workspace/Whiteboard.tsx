@@ -17,11 +17,14 @@ import {
   Minus,
   MousePointer2,
   Pencil,
+  Sparkle,
+  Sparkles,
   Square,
   Type,
 } from "lucide-react";
 import { Button } from "../../button";
 import FloatingProperties from "./FloatingProperties";
+import AIFloatingSidebar from "./AIFloatingSidebar";
 
 const tools = [
   {
@@ -90,6 +93,8 @@ const whiteboard = () => {
   const [activeTool, setActiveTool] = useState();
   const [selectedElement, setSelectedElement] = useState<any>(null);
   const [canvasState, setCanvasState] = useState<any>(null);
+
+  const [showAISidebar, setShowAISidebar] = useState<any>(false);
 
   const handleCanvasChange = (
     elements: readonly any[],
@@ -303,7 +308,18 @@ const whiteboard = () => {
         onBringToFront={() => handleBringFrontBack('front')}
         onSendToBack={() => handleBringFrontBack('back')}
       />
+
+        <div className="absolute right-50 bottom-2 z-50">
+            <Button size={'lg'} onClick={() => setShowAISidebar(!showAISidebar)}>
+                <Sparkles /> AI
+            </Button>
+
+            {showAISidebar && <AIFloatingSidebar excalidrawApi={excalidrawAPI}/>}
+
+        </div>
     </div>
+
+
   );
 };
 
