@@ -30,26 +30,74 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(result[0]);
 }
 
-
-export async function GET(req: NextRequest) { 
+export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-  const projectId = searchParams.get('projectId');
+  const projectId = searchParams.get("projectId");
 
   const user = await currentUser();
 
-  if(!projectId) {
-    return NextResponse.json({error: 'project information missing'})
+  if (!projectId && !user)
+    return NextResponse.json({ error: "Unauthorized user" });
+
+  if (!projectId && user) {
+    const projectList = await db
+      .select({
+        id: projects.id,
+        projectId: projects.projectId,
+        projectName: projects.projectName,
+        userEmail: projects.userEmail,
+        createdAt: projects.createdAt,
+        previewImage: whiteboardData.previewImage,
+        updatedAt: whiteboardData.updatedAt,
+      })
+      .from(projects)
+      .leftJoin(
+        whiteboardData,
+        eq(projects.projectId, whiteboardData.projectId),
+      )
+      .where(
+        and(
+          eq(projects.userEmail, user?.primaryEmailAddress?.emailAddress ?? ""),
+          eq(projects.isDeleted, false),
+        ),
+      );
+    return NextResponse.json(projectList);
   }
 
-  const userProject = await db.select().from(projects).where(and (eq(projects.projectId,projectId),eq(projects.userEmail,user?.primaryEmailAddress?.emailAddress ?? "")));
+  const userProject = await db
+    .select()
+    .from(projects)
+    .where(
+      and(
+        eq(projects.projectId, projectId ?? ""),
+        eq(projects.userEmail, user?.primaryEmailAddress?.emailAddress ?? ""),
+      ),
+    );
 
   if (userProject.length == 0) {
-    return NextResponse.json({error: "Unauthorized User"});
+    return NextResponse.json({ error: "Unauthorized User" });
   }
 
-  const result = await db.select().from(whiteboardData)
-  .where(eq(whiteboardData.projectId,projectId));
+  const result = await db
+    .select()
+    .from(whiteboardData)
+    .where(eq(whiteboardData.projectId, projectId ?? ""));
 
-  return NextResponse.json({...result[0],projectName: userProject[0].projectName});
+  return NextResponse.json({
+    ...result[0],
+    projectName: userProject[0].projectName,
+  });
+}
 
+export async function DELETE(req: NextRequest) {
+  const { projectId } = await req.json();
+
+  const result = await db
+    .update(projects)
+    .set({
+      isDeleted: true,
+    })
+    .where(eq(projects.projectId, projectId));
+
+  return NextResponse.json({ message: "Deleted" });
 }

@@ -3,7 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { projectId, elements, appState, files } = await req.json();
+  const { projectId, elements, appState, files , base64ImagePreview} = await req.json();
   const user = await currentUser();
 
   if (!user) {
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
         elements,
         appState,
         files,
+        previewImage: base64ImagePreview,
       })
       .onConflictDoUpdate({
         target: whiteboardData.projectId,
@@ -32,6 +33,7 @@ export async function POST(req: NextRequest) {
           elements,
           appState,
           files,
+          previewImage: base64ImagePreview,
           updatedAt: new Date(),
         },
       });

@@ -1,5 +1,5 @@
 // import { integer } from "drizzle-orm/gel-core";
-import { pgTable, serial, text, timestamp , integer, varchar, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp , integer, varchar, jsonb ,boolean} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -24,6 +24,7 @@ export const projects = pgTable("projects", {
   projectName: text("projectName").notNull(),
   userId: serial("user_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  isDeleted: boolean("isDeleted").default(false),
 });
 
 export const whiteboardData = pgTable("whiteboard_data", {
@@ -32,6 +33,7 @@ export const whiteboardData = pgTable("whiteboard_data", {
   elements: jsonb("elements"),
   appState: jsonb("appState"),
   files: jsonb("files"),
+  previewImage: text('previewImage'),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }); 
 
