@@ -25,6 +25,7 @@ import {
 import { Button } from "../../button";
 import FloatingProperties from "./FloatingProperties";
 import AIFloatingSidebar from "./AIFloatingSidebar";
+import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 
 const tools = [
   {
@@ -84,7 +85,11 @@ const tools = [
   },
 ];
 
-const whiteboard = () => {
+type Props = {
+  onApiReady: (api:ExcalidrawImperativeAPI) => void
+}
+
+const whiteboard = ({onApiReady}: Props) => {
   const [excalidrawAPI, setExcalidrawAPI] = useState<any>(null);
 
   const saveTimeRef = useRef<any>(null);
@@ -274,7 +279,7 @@ const whiteboard = () => {
   return (
     <div style={{ height: "90vh" }}>
       <Excalidraw
-        excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        excalidrawAPI={(api) => {setExcalidrawAPI(api);onApiReady(api)}}
         onChange={handleCanvasChange}
       />
 
