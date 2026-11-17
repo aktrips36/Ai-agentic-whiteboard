@@ -42,6 +42,17 @@ const CreateNewBoardDialog = () => {
       projectId,
     });
 
+    if (result.data?.error) {
+      setLoading(false);
+      setDialog(false);
+
+      toast.add({
+        type: "Failed",
+        title: "Insufficient Credits",
+      });
+      return;
+    }
+
     console.log(result?.data);
     toast.add({
       type: "success",

@@ -16,11 +16,16 @@ import { usePathname } from "next/navigation";
 import { Progress } from "../../progress"
 import { useUser } from "@clerk/nextjs"
 import CreateNewBoardDialog from "./CreateNewBoardDialog"
+import { UserDetailContext } from "@/context/UserDetailContext"
+import { useContext } from "react"
 
 export function AppSidebar() {
 
     const Path = usePathname();
     const {user} = useUser();
+
+    const {userDetail, setUserDetail} = useContext(UserDetailContext)
+    const totalMaxCredits = 3;
 
   return (
     <Sidebar>
@@ -67,8 +72,8 @@ export function AppSidebar() {
       <SidebarFooter>
             <CreateNewBoardDialog />
             <div className="p-4 my-3 border rounded-md">
-                <h2 className="text-sm flex justify-between mb-1">2 Files created <span>total 3</span></h2>
-                <Progress value={66} className="h-2 mt-2"/>
+                <h2 className="text-sm flex justify-between mb-1">{totalMaxCredits - userDetail?.credits} Files created <span>total {totalMaxCredits} </span></h2>
+                <Progress value={(totalMaxCredits - userDetail?.credits) / totalMaxCredits * 100} className="h-2 mt-2"/>
             </div>
 
             <div className="flex items-center gap-2">
