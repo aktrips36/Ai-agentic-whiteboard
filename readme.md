@@ -212,7 +212,3 @@ Open [http://localhost:3000](http://localhost:3000), sign up, and create your fi
 **aktrips36**
 
 ---
-
-## 📄 License
-
-No license has been specified yet. Add one (for example MIT) if you plan to open-source the project.
